@@ -4,7 +4,6 @@ Utility for converting binary files into images and vice-versa.
 # How to Use:
 Build the Project:
 
-
 ```bash
 mkdir build
 cd build
