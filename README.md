@@ -1,4 +1,4 @@
-# MysticImage
+# Mystic Image
 Utility for converting binary files into images and vice-versa.
 
 # How to Use:
