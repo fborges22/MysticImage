@@ -2,7 +2,20 @@
 Utility for converting binary files into images and vice-versa.
 
 # How to Use:
-Build the Project:
+
+To convert an binary file into image:
+
+```bash
+mystic myapp.exe myimg.png bin2png
+```
+
+To convert back the image to binary file:
+
+```bash
+mystic myimg.png myapp.exe png2bin
+```
+
+## Build the Project:
 
 ```bash
 mkdir build
