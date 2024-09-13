@@ -17,13 +17,13 @@ include_directories(${OpenSSL_INCLUDE_DIRS})
 add_library(mystic STATIC src/Standard.cpp src/Smoke.cpp)
 
 # Add the executable
-add_executable(mysticimg src/mystic.cpp)
+add_executable(mystique src/mystique.cpp)
 
 # Link OpenCV libraries
-target_link_libraries(mysticimg mystic ${OpenCV_LIBS})
+target_link_libraries(mystique mystic ${OpenCV_LIBS})
 
 # Installation configuration
-install(TARGETS mysticimg
+install(TARGETS mystique
     RUNTIME DESTINATION bin
 )
 
