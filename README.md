@@ -1,5 +1,5 @@
 # Mystic Image
-Utility for converting binary files into images and vice-versa.
+Utility for converting binary files into images and vice-versa. This application also supports steganographic encoding and decoding, enabling the embedding and extraction of binary data within image pixel data.
 
 # How to Use:
 
@@ -18,16 +18,14 @@ mystique myimg.png myapp.exe png2bin
 ## Build the Project:
 
 ```bash
-mkdir build
-cd build
-cmake ..
-make
+cmake -B_BUILD -DCMAKE_INSTALL_PREFIX=/path/to/install .
+cmake --build _BUILD
 ```
 
 ## Install the Application:
 
 ```bash
-sudo make install
+cmake --install
 ```
 
 ## Package the Application:
