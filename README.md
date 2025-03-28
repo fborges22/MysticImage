@@ -1,4 +1,6 @@
-# Mystic Image
+
+
+# <img align="center" width="10%" src="https://github.com/user-attachments/assets/43781835-06f0-48d4-a9df-e994a7b1d0ee"> The Mystic Image Utility
 Utility for converting binary files into images and vice-versa. This application also supports steganographic encoding and decoding, enabling the embedding and extraction of binary data within image pixel data.
 
 # How to Use:
