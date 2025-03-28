@@ -6,13 +6,13 @@ Utility for converting binary files into images and vice-versa.
 To convert an binary file into image:
 
 ```bash
-mystic myapp.exe myimg.png bin2png
+mystique myapp.exe myimg.png bin2png
 ```
 
 To convert back the image to binary file:
 
 ```bash
-mystic myimg.png myapp.exe png2bin
+mystique myimg.png myapp.exe png2bin
 ```
 
 ## Build the Project:

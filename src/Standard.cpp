@@ -4,8 +4,9 @@
 #include <cmath>
 #include <cstring>
 #include <opencv2/opencv.hpp>
+#include "Standard.hpp"
 
-void binary_file_to_image(const std::string& binary_file_path, const std::string& output_image_path) {
+void MysticStandard::binary_file_to_image(const std::string& binary_file_path, const std::string& output_image_path) {
     // Read the binary file
     std::ifstream binary_file(binary_file_path, std::ios::binary);
     if (!binary_file) {
@@ -36,7 +37,7 @@ void binary_file_to_image(const std::string& binary_file_path, const std::string
     }
 }
 
-void image_to_binary_file(const std::string& image_file_path, const std::string& output_binary_file_path) {
+void MysticStandard::image_to_binary_file(const std::string& image_file_path, const std::string& output_binary_file_path) {
     // Read the image file
     cv::Mat image = cv::imread(image_file_path, cv::IMREAD_COLOR);
     if (image.empty()) {
@@ -58,26 +59,4 @@ void image_to_binary_file(const std::string& image_file_path, const std::string&
     binary_file.close();
 
     std::cout << "Binary data saved as " << output_binary_file_path << std::endl;
-}
-
-int main(int argc, char** argv) {
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <input_file> <output_file> <mode: png2bin | bin2png>" << std::endl;
-        return 1;
-    }
-
-    std::string input_file = argv[1];
-    std::string output_file = argv[2];
-    std::string mode = argv[3];
-
-    if (mode == "bin2png") {
-        binary_file_to_image(input_file, output_file);
-    } else if (mode == "png2bin") {
-        image_to_binary_file(input_file, output_file);
-    } else {
-        std::cerr << "Invalid mode. Use 'png2bin' to convert image to binary or 'bin2png' to convert binary to image." << std::endl;
-        return 1;
-    }
-
-    return 0;
 }
