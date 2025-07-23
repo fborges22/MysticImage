@@ -3,6 +3,7 @@ import os
 import math
 import argparse
 import logging
+import struct
 import numpy as np
 from PIL import Image
 from glob import glob
@@ -14,13 +15,15 @@ def binary_file_to_image(binary_file_path, output_image_path):
         binary_data = binary_file.read()
 
     data_length = len(binary_data)
-    pixel_count = data_length // 3 + (1 if data_length % 3 else 0)
+    binary_data = struct.pack('>Q', data_length) + binary_data  # prepend 8-byte length
+
+    pixel_count = len(binary_data) // 3 + (1 if len(binary_data) % 3 else 0)
     width = int(math.sqrt(pixel_count))
     height = int(math.ceil(pixel_count / width))
 
     padded_length = width * height * 3
     image_data = np.frombuffer(binary_data, dtype=np.uint8)
-    image_data = np.pad(image_data, (0, padded_length - data_length), 'constant', constant_values=0)
+    image_data = np.pad(image_data, (0, padded_length - len(binary_data)), 'constant', constant_values=0)
     image_data = image_data.reshape((height, width, 3))
 
     image = Image.fromarray(image_data, 'RGB')
@@ -31,6 +34,13 @@ def image_to_binary_file(image_file_path, output_binary_file_path):
     image = Image.open(image_file_path).convert('RGB')
     image_data = np.array(image)
     binary_data = image_data.flatten().tobytes()
+
+    if len(binary_data) < 8:
+        logging.error("Image data too small to contain length header.")
+        return
+
+    original_length = struct.unpack('>Q', binary_data[:8])[0]
+    binary_data = binary_data[8:8 + original_length]
 
     with open(output_binary_file_path, 'wb') as binary_file:
         binary_file.write(binary_data)
