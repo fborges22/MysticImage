@@ -1,41 +1,94 @@
+# MysticImage
 
+MysticImage losslessly converts any file to a PNG and restores the exact original bytes. It can also hide a file in the least-significant bits of a carrier image and extract it later.
 
-# <img align="center" width="10%" src="https://github.com/user-attachments/assets/43781835-06f0-48d4-a9df-e994a7b1d0ee"> The Mystic Image Utility
-Utility for converting binary files into images and vice-versa. This application also supports steganographic encoding and decoding, enabling the embedding and extraction of binary data within image pixel data.
+Two compatible command-line implementations are included:
 
-# How to Use:
+- `mystique`: C++20/OpenCV executable
+- `mysticimg.py`: Python 3/Pillow script
 
-To convert an binary file into image:
+Both use the same versioned format, validate headers and payload lengths, support empty files, and return a non-zero exit status on failure.
+
+## Python quick start
+
+Python 3.10 or newer is required.
 
 ```bash
-mystique myapp.exe myimg.png bin2png
+python -m venv .venv
+# Windows
+.venv\Scripts\python -m pip install -r requirements.txt
+# Linux/macOS
+.venv/bin/python -m pip install -r requirements.txt
 ```
 
-To convert back the image to binary file:
+Convert a file to an image and restore it:
 
 ```bash
-mystique myimg.png myapp.exe png2bin
+python mysticimg.py bin2png archive.zip archive.png
+python mysticimg.py png2bin archive.png restored.zip
 ```
 
-## Build the Project:
+Existing output files are protected by default. Pass `--overwrite` to replace one.
+
+Batch conversion accepts regular files for `bin2png` and PNG files for `png2bin`:
 
 ```bash
-cmake -B_BUILD -DCMAKE_INSTALL_PREFIX=/path/to/install .
-cmake --build _BUILD
+python mysticimg.py bin2png input-directory output-directory --directory
+python mysticimg.py png2bin image-directory restored-directory --directory
 ```
 
-## Install the Application:
+## C++ build and use
+
+Requirements: CMake 3.16+, a C++20 compiler, and OpenCV with the `core` and `imgcodecs` components.
 
 ```bash
-cmake --install
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
 ```
 
-## Package the Application:
+The executable location depends on the generator (`build/mystique` or `build/Release/mystique.exe`). Its commands are:
 
 ```bash
+mystique bin2png archive.zip archive.png
+mystique png2bin archive.png restored.zip
+```
+
+The original argument order remains accepted for compatibility: `mystique archive.zip archive.png bin2png`.
+
+## Steganography
+
+Capacity is approximately `(width × height × 3) / 8 - 16` bytes for an RGB carrier. Always write the result as PNG: JPEG and other lossy processing destroy the embedded bits.
+
+```bash
+# Python
+python mysticimg.py hide secret.bin carrier.png concealed.png
+python mysticimg.py reveal concealed.png recovered.bin
+
+# C++
+mystique hide secret.bin carrier.png concealed.png
+mystique reveal concealed.png recovered.bin
+```
+
+Steganography conceals data but does not encrypt it. Encrypt sensitive content before embedding it.
+
+## Test
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Tests cover random and empty-file round trips, steganography, capacity and corrupt-header errors, and CLI overwrite protection.
+
+## Install and package the C++ executable
+
+```bash
+cmake --install build --prefix /path/to/install
+cd build
 cpack
 ```
 
-This will generate the specified packages (e.g., .zip and .tgz) in the build directory.
+CPack creates ZIP and TGZ archives in the build directory.
 
-Ensure that you have CMake, CPack, and OpenCV installed on your system to successfully build, install, and package the project.
+## Format compatibility
+
+Version 1.1 images use a 16-byte header (`MYSTIC01` or `MYSTEG01` plus an unsigned 64-bit big-endian payload length). Older C++ images did not store the original length and cannot be restored without their expected byte count. Older Python images used an unversioned header and are intentionally rejected instead of risking extraction from an unrelated or corrupted image.
